@@ -73,7 +73,30 @@ if [ "$PYTHONEXE" = "" ]; then
     export PYTHONEXE=python
 fi
 
-# Install modules and/or docs
+# PRODMODE=4: top-level CMake build (builds all modules in one pass)
+if [ "$INSTALL_MODS" -eq 1 ] && [ "${PRODMODE:-0}" -eq 4 ]; then
+    NPROC=${OMP_NUM_THREADS:-$(nproc 2>/dev/null || echo 4)}
+    BUILDDIR="build/cmake_${ELSAPROD:-x86_r8}"
+    mkdir -p "$BUILDDIR"
+    cmake -S . -B "$BUILDDIR" \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX="$INSTALLPATH" \
+        -DCASSIOPEE_ROOT="$(pwd)" \
+        || exit 1
+    cmake --build "$BUILDDIR" -j"$NPROC" || exit 1
+    cmake --install "$BUILDDIR" || exit 1
+    # Copy environment scripts
+    if [ -z "$PREFIX" ]; then
+        cp Envs/env_Cassiopee* "$CASSIOPEE"/Dist
+        cp Envs/sh_Cassiopee*  "$CASSIOPEE"/Dist
+    else
+        cp Envs/env_Cassiopee* "$PREFIX"/Dist
+        cp Envs/sh_Cassiopee*  "$PREFIX"/Dist
+    fi
+    exit 0
+fi
+
+# Install modules and/or docs (per-module SCons / pip mode)
 for mod in $FULLMODULES
 do
   if test -e $mod

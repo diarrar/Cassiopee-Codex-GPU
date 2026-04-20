@@ -1,8 +1,19 @@
 [build-system]
-requires = [
-  "setuptools>=45",
-  "wheel",
-  "numpy>=1.23.3",
-  "scons>=4.4.0"
-]
-build-backend = "setuptools.build_meta"
+requires = ["scikit-build-core>=0.3.3", "numpy>=1.23.3"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "Post"
+version = "4.2"
+description = "Cassiopee Post module"
+authors = [{name = "ONERA", email = "cassiopee@onera.fr"}]
+requires-python = ">=3.8"
+dependencies = ["numpy>=1.23.3"]
+
+[tool.scikit-build]
+# cmake.source-dir points to this module's CMakeLists.txt (default: ".")
+cmake.build-type = "Release"
+# CASSIOPEE_ROOT defaults to the parent directory (sibling modules must be
+# present when building standalone).  Override with:
+#   pip install --config-setting=cmake.args="-DCASSIOPEE_ROOT=/path/to/Cassiopee" .
+cmake.args = []

@@ -29,13 +29,24 @@ if [ "$PYTHONEXE" != "" ]; then
     alias python=$PYTHONEXE
 fi
 
-# set production mode (0: scons+setup, 1: scons+pip, 2: scons+pip+wheel)
+# set production mode (0: scons+setup, 1: scons+pip, 2: scons+pip+wheel, 4: cmake)
 if [ "$PRODMODE" = "" ]; then
     PRODMODE=0
 fi
 
 # Compilation et installation
-if [ $PRODMODE -ge 0 ]; then
+if [ $PRODMODE -eq 4 ]; then # cmake
+    NPROC=${OMP_NUM_THREADS:-$(nproc 2>/dev/null || echo 4)}
+    BUILDDIR="build/cmake_${ELSAPROD:-x86_r8}"
+    mkdir -p "$BUILDDIR"
+    cmake -S . -B "$BUILDDIR" \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX="$INSTALLPATH" \
+        -DCASSIOPEE_ROOT="$(cd ..; pwd)" \
+        || exit 1
+    cmake --build "$BUILDDIR" -j"$NPROC" || exit 1
+    cmake --install "$BUILDDIR" || exit 1
+elif [ $PRODMODE -ge 0 ]; then
     sconsf=`which scons`
     [ $? != 0 ] && echo "Error: scons not found." && exit 1;
     if [ "$OMP_NUM_THREADS" != "" ]; then

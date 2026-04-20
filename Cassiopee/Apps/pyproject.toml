@@ -1,8 +1,14 @@
 [build-system]
-requires = [
-  "setuptools>=45",
-  "wheel",
-  "numpy>=1.23.3",
-  "scons>=4.4.0"
-]
+requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "Apps"
+version = "4.2"
+description = "Application modules for Cassiopee"
+authors = [{name = "ONERA", email = "cassiopee@onera.fr"}]
+requires-python = ">=3.8"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["Apps*"]
