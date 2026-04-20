@@ -8,7 +8,7 @@ if (NOT DEFINED PROJECT_ROOT)
   if (DEFINED CASSIOPEE_ROOT)
     set(PROJECT_ROOT ${CASSIOPEE_ROOT} CACHE PATH)
   else()
-    set(PROJECT_ROOT ${PROJECT_SOURCE_DIR} CACHE PATH)
+    set(PROJECT_ROOT ${PROJECT_SOURCE_DIR}/.. CACHE PATH "Cassiopee root (parent of the module directory)")
   endif()
 endif()
 
